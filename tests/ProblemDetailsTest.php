@@ -57,4 +57,30 @@ final class ProblemDetailsTest extends TestCase
         $this->assertNull($problem->getDetail());
         $this->assertNull($problem->getInstance());
     }
+
+    public function test_it_stores_extensions(): void
+    {
+        $problem = new ProblemDetails(
+            extensions: [
+                'foo' => 'bar',
+                'count' => 123,
+            ]
+        );
+
+        $this->assertSame([
+            'foo' => 'bar',
+            'count' => 123,
+        ], $problem->getExtensions());
+    }
+
+    public function test_it_rejects_reserved_extension_keys(): void
+    {
+        $this->expectException(\InvalidArgumentException::class);
+
+        new ProblemDetails(
+            extensions: [
+                'status' => 418,
+            ]
+        );
+    }
 }

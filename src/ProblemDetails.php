@@ -6,13 +6,24 @@ namespace Yamous\ProblemDetailsApi;
 
 final class ProblemDetails implements ProblemDetailsInterface
 {
+    private const RESERVED_KEYS = [
+        'type',
+        'title',
+        'status',
+        'detail',
+        'instance',
+    ];
+
     public function __construct(
         private string $type = 'about:blank',
         private ?string $title = null,
         private ?int $status = null,
         private ?string $detail = null,
         private ?string $instance = null,
-    ) {}
+        private array $extensions = []
+    ) {
+        $this->assertNoReservedKeysInExtensions($extensions);
+    }
 
     public function getType(): string
     {
@@ -37,5 +48,22 @@ final class ProblemDetails implements ProblemDetailsInterface
     public function getInstance(): ?string
     {
         return $this->instance;
+    }
+
+    public function getExtensions(): array
+    {
+        return $this->extensions;
+    }
+
+    private function assertNoReservedKeysInExtensions(array $extensions): void
+    {
+        foreach ($extensions as $key => $_) {
+            if (\in_array($key, self::RESERVED_KEYS, true)) {
+                throw new \InvalidArgumentException(\sprintf(
+                    'The key "%s" is reserved and cannot be used as an extension.',
+                    $key
+                ));
+            }
+        }
     }
 }
