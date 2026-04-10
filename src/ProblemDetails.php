@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Yamous\ProblemDetailsApi;
 
-final class ProblemDetails implements ProblemDetailsInterface
+final class ProblemDetails implements ProblemDetailsInterface, \JsonSerializable
 {
     private const RESERVED_KEYS = [
         'type',
@@ -53,6 +53,19 @@ final class ProblemDetails implements ProblemDetailsInterface
     public function getExtensions(): array
     {
         return $this->extensions;
+    }
+
+    public function jsonSerialize(): array
+    {
+        $data = array_filter([
+            'type' => $this->type,
+            'title' => $this->title,
+            'status' => $this->status,
+            'detail' => $this->detail,
+            'instance' => $this->instance,
+        ], static fn ($v) => $v !== null);
+
+        return [...$data, ...$this->extensions];
     }
 
     private function assertNoReservedKeysInExtensions(array $extensions): void

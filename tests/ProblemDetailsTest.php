@@ -83,4 +83,23 @@ final class ProblemDetailsTest extends TestCase
             ]
         );
     }
+
+    public function test_it_serializes_problem(): void
+{
+    $problem = new ProblemDetails(
+        type: 'about:blank',
+        title: 'Error',
+        status: 418,
+        detail: 'Something went wrong',
+        instance: '/foo'
+    );
+
+    $this->assertSame([
+        'type' => 'about:blank',
+        'title' => 'Error',
+        'status' => 418,
+        'detail' => 'Something went wrong',
+        'instance' => '/foo',
+    ], $problem->jsonSerialize());
+}
 }
