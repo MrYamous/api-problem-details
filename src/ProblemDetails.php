@@ -22,6 +22,7 @@ final class ProblemDetails implements ProblemDetailsInterface, \JsonSerializable
         private ?string $instance = null,
         private array $extensions = []
     ) {
+        $this->assertValidStatus($status);
         $this->assertNoReservedKeysInExtensions($extensions);
     }
 
@@ -66,6 +67,19 @@ final class ProblemDetails implements ProblemDetailsInterface, \JsonSerializable
         ], static fn ($v) => $v !== null);
 
         return [...$data, ...$this->extensions];
+    }
+
+    private function assertValidStatus(?int $status): void
+    {
+        if ($status === null) {
+            return;
+        }
+
+        if ($status < 100 || $status > 599) {
+            throw new \InvalidArgumentException(
+                \sprintf('Invalid HTTP status code "%d".', $status)
+            );
+        }
     }
 
     private function assertNoReservedKeysInExtensions(array $extensions): void

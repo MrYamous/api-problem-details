@@ -85,21 +85,35 @@ final class ProblemDetailsTest extends TestCase
     }
 
     public function test_it_serializes_problem(): void
-{
-    $problem = new ProblemDetails(
-        type: 'about:blank',
-        title: 'Error',
-        status: 418,
-        detail: 'Something went wrong',
-        instance: '/foo'
-    );
+    {
+        $problem = new ProblemDetails(
+            type: 'about:blank',
+            title: 'Error',
+            status: 418,
+            detail: 'Something went wrong',
+            instance: '/foo'
+        );
 
-    $this->assertSame([
-        'type' => 'about:blank',
-        'title' => 'Error',
-        'status' => 418,
-        'detail' => 'Something went wrong',
-        'instance' => '/foo',
-    ], $problem->jsonSerialize());
-}
+        $this->assertSame([
+            'type' => 'about:blank',
+            'title' => 'Error',
+            'status' => 418,
+            'detail' => 'Something went wrong',
+            'instance' => '/foo',
+        ], $problem->jsonSerialize());
+    }
+
+    public function test_it_accepts_valid_status(): void
+    {
+        $problem = new ProblemDetails(status: 200);
+
+        $this->assertSame(200, $problem->getStatus());
+    }
+
+    public function test_it_rejects_invalid_status(): void
+    {
+        $this->expectException(\InvalidArgumentException::class);
+
+        new ProblemDetails(status: 999);
+    }
 }
